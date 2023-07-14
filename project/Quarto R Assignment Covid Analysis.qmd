@@ -1,0 +1,155 @@
+---
+title: "Quarto R Assignment"
+author: "Agnes Aruchandra"
+date: "14/06/2023"
+format: html
+execute: 
+  echo: false
+  warning: false
+  message: false
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(tidyverse)
+
+options(scipen = 999)
+
+country_data <- read.csv("/cloud/project/country_data.csv .csv")
+country_metadata <- read.csv("/cloud/project/country_metadata. csv.csv")
+```
+
+# Introduction 
+ *COVID-19, also known as the coronavirus disease 2019, is a highly contagious respiratory illness caused by the novel coronavirus SARS-CoV-2. The virus first emerged in Wuhan, China, in late 2019 and quickly spread worldwide, resulting in a global pandemic. The impact of COVID-19 has been significant across the globe, including in Ireland and other European countries*. 
+ 
+# COVID-19 has had a global impact, affecting people in several ways:
+
+- Health: Many people fell ill, with severe cases leading to hospitalizations and deaths.
+
+- Social and Psychological: Lockdowns and restrictions caused isolation, loneliness, and mental health challenges.
+
+- Economic: Businesses closed, jobs were lost, and individuals faced financial hardships.
+
+- Education: School closures disrupted learning, leading to challenges in remote education.
+
+- Healthcare System: Hospitals faced strain, leading to shortages and delays in non-COVID-19 care.
+
+- Disparities: Vulnerable populations faced higher infection rates and health disparities.
+
+- Vaccination: Vaccines were developed and administered to reduce severe illness and control the spread.
+
+These impacts varied globally based on factors such as healthcare infrastructure, government responses, and socioeconomic conditions.
+
+***Project Description: Analysis of COVID-19 Situation in Ireland and 9 Other Countries***
+
+**Objective**:
+The objective of this project is to analyze the COVID-19 pandemic situation in Ireland compared to nine other countries. The analysis will involve examining various metrics and trends related to COVID-19, such as case numbers, deaths, testing, vaccination rates, and any other relevant data available. The primary focus will be on Ireland, but a comparative analysis with other countries will provide valuable insights into the global context.
+
+**Data Sources**:
+The project will utilize two main data sources:
+1. country_data.csv: This file contains COVID-19 data for Ireland and the nine other countries of interest. The data includes daily case counts, deaths, testing numbers, and other related information.
+2. country_metadata.csv: This file provides additional metadata for each country, including population size, geographical location, healthcare system details, and any other pertinent information.
+
+**Approach**:
+1. Data Preprocessing: The first step will involve preprocessing the provided data files, cleaning any inconsistencies, and merging the relevant information from both datasets.
+
+2. **Overview Analysis**: A general overview of the COVID-19 situation in Ireland and the nine other countries will be conducted. This will include analyzing total cases, deaths, testing rates, and vaccination coverage to understand the current status and trends.
+
+3. **Comparative Analysis**: The focus will then shift to a detailed comparative analysis between Ireland and the other countries. This will involve examining metrics such as infection rates, mortality rates, testing strategies, vaccination progress, and any notable policies or interventions implemented by each country.
+
+4. **Visualization**: The analysis findings will be presented through meaningful visualizations, including graphs, charts, and maps. These visual representations will help in conveying key insights and facilitating easy interpretation of the data.
+
+5. **Insights and Recommendations**: Based on the analysis, insights will be drawn regarding the COVID-19 situation in Ireland and its comparison with other countries. Recommendations or suggestions for potential interventions, policy adjustments, or areas of improvement may be provided, if deemed necessary.
+
+**Deliverables**:
+1. Analysis Report: A comprehensive report will be generated, summarizing the findings of the analysis. It will include an introduction, methodology, data analysis results, visualizations, insights, and recommendations.
+2. Visualizations: Various visual representations, such as graphs, charts, and maps, will be created to illustrate the data and key findings effectively.
+3. Raw Data: The cleaned and merged dataset used for analysis will be made available, ensuring transparency and reproducibility.
+
+**Collaboration with NPHET**:
+Close collaboration with NPHET (National Public Health Emergency Team) will be maintained throughout the project. Regular communication, feedback, and updates will be provided to ensure that the analysis aligns with their requirements and objectives. NPHET's expertise and insights will be invaluable in interpreting the results and deriving meaningful conclusions.
+
+***By conducting this analysis, we aim to provide NPHET with a comprehensive understanding of the COVID-19 situation in Ireland and how it compares to other countries. The insights gained from this analysis will assist in making informed decisions, formulating effective strategies, and implementing appropriate measures to mitigate the impact of the pandemic***.
+
+Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+
+## Running Code
+
+When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
+
+
+# I LOVE **R** 
+
+# Thank you Professor Damien
+ 
+## For your love and support
+
+```{r}
+map_data <- country_data %>% 
+  group_by(location) %>%
+  slice_max(date)
+map_world <- map_data("world") 
+map_world_data <- full_join(map_world, map_data, by = c("region" = "location"))
+ggplot(data = map_world_data) +
+  aes(x = long, y = lat, group = group, fill = total_cases_per_million) +
+  geom_polygon() +
+  labs(
+    title = "map of total cases per million on 31/12/2022",
+    x = "Longitude",
+    fill = "Total Cases per Million")
+
+```
+
+
+
+
+```{r}
+country_metadata %>%
+
+  ggplot(aes(human_development_index, gdp_per_capita)) +
+  geom_point(size = 3)+
+  geom_line(colour = "red")
+  theme_bw() +
+  labs(title = "Relationship between Human Development Index and GDP per Capita",
+       x = "Human Development Index",
+       y = "GDP per Capita") 
+  
+```
+
+
+
+
+```{r}
+ country_data %>% 
+  group_by(location) %>% 
+  slice_max(total_cases,with_ties = FALSE) %>%
+  ggplot(aes(location,total_cases, fill = location)) +
+  geom_col()
+
+
+```
+
+
+
+```{r}
+ggplot(data = country_data) +
+  aes(x = date, y = new_cases, color = location, group = location) +
+  geom_line() +
+labs(title = "New Cases Over Time",
+       x = "Date",
+       y = "New Cases") + 
+  theme_minimal() 
+theme(plot.title = element_text(size = 20, face = "bold"),
+        axis.text = element_text(size = 12),
+        axis.title = element_text(size = 14),
+        legend.position = "bottom",
+        legend.title = element_blank(),
+        legend.text = element_text(size = 12),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank())
+
+```
+
+
